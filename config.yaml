@@ -5,3 +5,5 @@ config:
   user: 'root'
   passwd: '123456'
   charset: 'utf8mb4'
+  'read_timeout': 60.0
+  'write_timeout': 60.0
