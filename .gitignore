@@ -1,0 +1,6 @@
+*.log
+*.sql
+*.pyc
+tmp.*
+.idea/*
+.DS_Store

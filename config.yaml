@@ -1,0 +1,7 @@
+config:
+  host: '192.168.133.48'
+  port: 3309
+  db: 'erp_prod'
+  user: 'root'
+  passwd: '123456'
+  charset: 'utf8mb4'
