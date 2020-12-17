@@ -13,8 +13,14 @@ def get_slow_query_list():
     query_time = QueryTime()
     for sql in sql_set:
         try:
-            duration = query_time.get_query_time(sql)
-            print(duration)
+            print(sql)
+            if len(sql) <= 10000:
+                duration = query_time.get_query_time(sql)
+            else:
+                duration = 'infinite'
+                print('sql is to long')
+            n += 1
+            print('---no {}: {}---'.format(n, duration))
             slow_query = SlowQuery(sql, duration)
             l.append(slow_query)
         except Exception as e:

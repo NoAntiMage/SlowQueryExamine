@@ -42,5 +42,5 @@ class ParseSqlLog(object):
 
 
 if __name__ == '__main__':
-    sql_parse = ParseSql(log_file='./slow_sql/mysql_slow.log', scan_num=1000)
+    sql_parse = ParseSqlLog(log_file='./slow_sql/mysql_slow.log', scan_num=1000)
     sql_parse.parse_slow_sql_file()
