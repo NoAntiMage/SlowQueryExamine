@@ -1,18 +1,36 @@
 # /usr/bin/python
 # coding: utf-8
 
+from entity.SlowQuery import SlowQueryModel
+
 
 class ParseSqlLog(object):
     def __init__(self, log_file, scan_num=10**4):
         self.log_file = log_file
         self.scan_num = scan_num
-        self.sql_set = set()
+        self.sql_list = list()
+        self._sql_set = set()
         self._line = str()
-        self._sql = str()
+        self._sql = SlowQueryModel()
         self._flag = bool()
 
-    def get_single_sql(self):
-        self._sql += self._line
+    def _get_single_sql(self):
+        self._sql.sql += self._line
+
+    def _parse_sql_info(self):
+        sql_instance = SlowQueryModel()
+
+        result = self._line.strip('# ').split(' ')
+        sql_instance.query_time = result[1]
+        sql_instance.lock_time = result[4]
+        sql_instance.rows_sent = result[6]
+        sql_instance.rows_examined = result[9]
+        return sql_instance
+
+    def _add_one_distinct_sql(self):
+        self._sql_set.add(self._sql.sql)
+        self.sql_list.append(self._sql)
+
 
     def parse_slow_sql_file(self):
         with open(self.log_file, 'rb') as f:
@@ -21,6 +39,8 @@ class ParseSqlLog(object):
             while True:
                 num += 1
                 self._line = f.readline()
+                if 'Query_time:' in self._line:
+                    self._sql = self._parse_sql_info()
                 if 'SET' in self._line:
                     self._flag = 1
                     continue
@@ -28,19 +48,27 @@ class ParseSqlLog(object):
                     self._flag = 0
                     # print('------------- SQL query -------------')
                     # print(self._sql)
-                    self.sql_set.add(self._sql)
-                    self._sql = ''
                     sql_num += 1
+                    if self._sql.sql not in self._sql_set:
+                        self._add_one_distinct_sql()
+                        self._sql = SlowQueryModel()
+                    else:
+                        self._sql = SlowQueryModel()
+                        continue
 
                 if self._flag == 1:
-                    self.get_single_sql()
+                    self._get_single_sql()
                 if num == self.scan_num:
                     break
             print(str(sql_num) + ' sql have been scan.')
-            print(str(len(self.sql_set)) + ' distinct sql have been got.')
-        return self.sql_set
+            print(str(len(self.sql_list)) + ' distinct sql have been got.')
+        return self.sql_list
 
 
 if __name__ == '__main__':
-    sql_parse = ParseSqlLog(log_file='./slow_sql/mysql_slow.log', scan_num=1000)
-    sql_parse.parse_slow_sql_file()
+    sql_parse = ParseSqlLog(log_file='./slow_sql/mysql_slow.log', scan_num=70000)
+    results = sql_parse.parse_slow_sql_file()
+    # for s in results:
+    #     print(s)
+
+# todo 完成日志 sql解析
