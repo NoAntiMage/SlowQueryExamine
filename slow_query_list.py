@@ -23,16 +23,16 @@ def get_slow_query_list():
     return l
 
 
-if __name__ == '__main__':
-    slow_query_list = get_slow_query_list()
-    # for q in slow_query_list:
-    #     print(q.duration)
-    #     print(type(q.duration))
-
+def output_to_file_json(l):
     querys_dict = dict()
     num = 0
-    for q in slow_query_list:
+    for q in l:
         num += 1
         querys_dict.update({num: q.__dict__})
     with open('./output/slow_query.json', 'w') as f:
         json.dump(querys_dict, f, default=str, indent=4)
+
+
+if __name__ == '__main__':
+    slow_query_list = get_slow_query_list()
+    output_to_file_json(slow_query_list)
