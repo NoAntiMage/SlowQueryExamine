@@ -1,0 +1,3 @@
+config:
+  scan_log_file: './slow_sql/mysql_slow.log'
+  scan_line_num: 10000

@@ -2,12 +2,14 @@
 # coding: utf-8
 
 from entity.SlowQuery import SlowQueryModel
+from util.tool import get_yaml_data
 
 
 class ParseSqlLog(object):
-    def __init__(self, log_file, scan_num=10**4):
-        self.log_file = log_file
-        self.scan_num = scan_num
+    def __init__(self, config_file='./config/scan_config.yaml'):
+        self.config_file = config_file
+        self.log_file = get_yaml_data(self.config_file)['config']['scan_log_file']
+        self.scan_num = get_yaml_data(self.config_file)['config']['scan_line_num']
         self.sql_list = list()
         self._sql_set = set()
         self._line = str()
@@ -48,8 +50,6 @@ class ParseSqlLog(object):
                 # 至 # 号行结束
                 if '#' in self._line and self._flag == 1:
                     self._flag = 0
-                    # print('------------- SQL query -------------')
-                    # print(self._sql)
                     sql_num += 1
                     # sql去重
                     if self._sql.sql not in self._sql_set:
@@ -63,13 +63,15 @@ class ParseSqlLog(object):
                     self._get_single_sql()
                 if num == self.scan_num:
                     break
+                if len(self._line) == 0:
+                    break
             print(str(sql_num) + ' sql have been scan.')
             print(str(len(self.sql_list)) + ' distinct sql have been got.')
         return self.sql_list
 
 
 if __name__ == '__main__':
-    sql_parse = ParseSqlLog(log_file='./slow_sql/mysql_slow.log', scan_num=500)
+    sql_parse = ParseSqlLog()
     results = sql_parse.parse_slow_sql_file()
     for s in results:
         print(s)
