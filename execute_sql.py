@@ -1,24 +1,16 @@
 # coding: utf-8
 import pymysql
-import yaml
+from util.tool import get_yaml_data
 
 
 class QueryTime(object):
     sql_time = "SELECT curtime(6);"
 
-    def __init__(self, config_file='./config.yaml'):
+    def __init__(self, config_file='./config/db_config.yaml'):
         self.config_file = config_file
-        self._db_config = self.get_yaml_data(self.config_file)
+        self._db_config = get_yaml_data(self.config_file)
         self._db = pymysql.connect(**self._db_config['config'])
         self.cursor = self._db.cursor()
-
-    @staticmethod
-    def get_yaml_data(yaml_file):
-        with open(yaml_file, 'rb') as f:
-            file_data = f.read()
-        # print(file_data)
-        data = yaml.load(file_data, Loader=yaml.FullLoader)
-        return data
 
     def get_query_time(self, sql):
         self.cursor.execute(self.sql_time)
@@ -26,9 +18,9 @@ class QueryTime(object):
         self.cursor.execute(sql)
         self.cursor.execute(self.sql_time)
         end_at = self.cursor.fetchone()[0]
-        duration = end_at - begin_at
+        duration = float((str(end_at - begin_at)).split(":")[-1])
         self.cursor.execute('SELECT sleep(0.3);')
-        return str(duration)
+        return duration
 
 
 if __name__ == '__main__':
