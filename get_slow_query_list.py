@@ -1,33 +1,35 @@
 # coding: utf-8
 
-import json
 from parse_sql_log import ParseSqlLog
 from execute_sql import QueryTime
 
 
 def get_slow_query_list():
     l = list()
-    log_parse = ParseSqlLog(log_file='./slow_sql/mysql_slow.log', scan_num=1000)
-    sql_list = log_parse.parse_slow_sql_file()
+    log_parse = ParseSqlLog()
+    sqlobj_list = log_parse.parse_slow_sql_file()
+    # print(sqlobj_list)
     query_time = QueryTime()
-    n = 0
-    for sql_obj in sql_list:
+    # n = 0
+    for sql_obj in sqlobj_list:
+        # print(sql_obj)
         try:
             # print(sql_obj.sql)
             # sql语句过长 视为异常sql
-            if len(sql_obj.sql) <= 10000:
+            if len(sql_obj.sql) <= log_parse.sql_char_limit:
                 duration = query_time.get_query_time(sql_obj.sql)
-
+                # print(duration)
             else:
-                duration = '99.999'
+                duration = 99.999
                 print('sql is to long')
-
-            sql_obj.query_time_in_test = duration.split(":")[-1].strip('0')
-            # print(sql_obj)
+    #
+            sql_obj.query_time_in_test = duration
+    #         print(sql_obj)
+    #         print(sql_obj.sql)
             l.append(sql_obj)
-            n += 1
+    #         n += 1
         except Exception as e:
-            # print(e)
+            # print(repr(e))
             continue
     return l
 
