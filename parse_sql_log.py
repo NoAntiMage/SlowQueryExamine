@@ -31,7 +31,6 @@ class ParseSqlLog(object):
         self._sql_set.add(self._sql.sql)
         self.sql_list.append(self._sql)
 
-
     def parse_slow_sql_file(self):
         with open(self.log_file, 'rb') as f:
             num = 0
@@ -39,16 +38,20 @@ class ParseSqlLog(object):
             while True:
                 num += 1
                 self._line = f.readline()
+                # Query_time行 记录了sql语句执行信息
                 if 'Query_time:' in self._line:
                     self._sql = self._parse_sql_info()
+                # SET行 开始加载sql
                 if 'SET' in self._line:
                     self._flag = 1
                     continue
+                # 至 # 号行结束
                 if '#' in self._line and self._flag == 1:
                     self._flag = 0
                     # print('------------- SQL query -------------')
                     # print(self._sql)
                     sql_num += 1
+                    # sql去重
                     if self._sql.sql not in self._sql_set:
                         self._add_one_distinct_sql()
                         self._sql = SlowQueryModel()
@@ -66,9 +69,9 @@ class ParseSqlLog(object):
 
 
 if __name__ == '__main__':
-    sql_parse = ParseSqlLog(log_file='./slow_sql/mysql_slow.log', scan_num=70000)
+    sql_parse = ParseSqlLog(log_file='./slow_sql/mysql_slow.log', scan_num=500)
     results = sql_parse.parse_slow_sql_file()
-    # for s in results:
-    #     print(s)
+    for s in results:
+        print(s)
 
-# todo 完成日志 sql解析
+# done 完成日志 sql解析
