@@ -28,7 +28,7 @@ class QueryTime(object):
         end_at = self.cursor.fetchone()[0]
         duration = end_at - begin_at
         self.cursor.execute('SELECT sleep(0.3);')
-        return duration
+        return str(duration)
 
 
 if __name__ == '__main__':

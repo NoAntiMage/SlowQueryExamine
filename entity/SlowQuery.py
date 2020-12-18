@@ -11,5 +11,5 @@ class SlowQueryModel(object):
         self.query_time_in_test = 0
 
     def __str__(self):
-        return 'query time : {}\nlock time: {}\nrows_sent: {}\nrows_examined: {}\n\n'.format(str(self.query_time), self.lock_time, self.rows_sent, self.rows_examined)
+        return 'query time : {}\nlock time: {}\nrows_sent: {}\nrows_examined: {}\nquery_time_in_test: {}\n\n'.format(str(self.query_time), self.lock_time, self.rows_sent, self.rows_examined, self.query_time_in_test)
 

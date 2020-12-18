@@ -20,7 +20,7 @@ class ParseSqlLog(object):
     def _parse_sql_info(self):
         sql_instance = SlowQueryModel()
 
-        result = self._line.strip('# ').split(' ')
+        result = self._line.strip('# ').strip('\n').split(' ')
         sql_instance.query_time = result[1]
         sql_instance.lock_time = result[4]
         sql_instance.rows_sent = result[6]
