@@ -7,9 +7,10 @@ from util.tool import get_yaml_data
 
 class ParseSqlLog(object):
     def __init__(self, config_file='./config/scan_config.yaml'):
-        self.config_file = config_file
-        self.log_file = get_yaml_data(self.config_file)['config']['scan_log_file']
-        self.scan_num = get_yaml_data(self.config_file)['config']['scan_line_num']
+        self._config = get_yaml_data(config_file)
+        self.log_file = self._config['config']['scan_log_file']
+        self.scan_num = self._config['config']['scan_line_num']
+        self.sql_char_limit = self._config['config']['sql_char_limit']
         self.sql_list = list()
         self._sql_set = set()
         self._line = str()
