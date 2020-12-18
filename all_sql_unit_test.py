@@ -21,8 +21,8 @@ class AllSqlUnitTest(object):
                     duration = query_time.get_query_time(sql_obj.sql)
                 else:
                     duration = 99.999
-                    print('sql is to long')
-        #
+                    print('sql is too long')
+
                 sql_obj.query_time_in_test = duration
                 self.slow_query_list.append(sql_obj)
         #         n += 1
